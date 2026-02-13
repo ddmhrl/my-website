@@ -1,2 +1,1743 @@
 # my-website
-hrl
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日朗的秘密 - 黄日朗粉丝网站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1a3c8b;
+            --accent-orange: #ff6b35;
+            --light-bg: #f5f7fa;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        /* 导航栏 */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--accent-orange);
+            font-size: 2rem;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent-orange);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-orange);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* 会员相关样式 */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .member-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f0f7ff;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+        
+        .member-status i {
+            color: #ff6b35;
+        }
+        
+        .member-status.member {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .member-status.member i {
+            color: #2e7d32;
+        }
+        
+        .auth-btn {
+            background-color: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .auth-btn:hover {
+            background-color: #e55a2b;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+        
+        /* 会员模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .modal-close:hover {
+            color: var(--dark-text);
+        }
+        
+        .invite-form {
+            margin-bottom: 1.5rem;
+        }
+        
+        .invite-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .invite-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+        
+        .invite-submit {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .invite-submit:hover {
+            background-color: #15306e;
+        }
+        
+        .invite-note {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            text-align: center;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            background: linear-gradient(rgba(26, 60, 139, 0.85), rgba(26, 60, 139, 0.9)), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background-color: var(--accent-orange);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-image {
+            max-width: 300px;
+            margin: 2rem auto 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 5px solid white;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* 字幕展示区 */
+        .subtitles-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-orange);
+            border-radius: 2px;
+        }
+        
+        .subtitles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .subtitle-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 5px solid var(--accent-orange);
+            cursor: pointer;
+        }
+        
+        .subtitle-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .subtitle-desc {
+            color: var(--light-text);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .story-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .story-btn:hover {
+            background-color: #15306e;
+        }
+        
+        /* 故事模态框 */
+        .story-modal-content {
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+        
+        .story-title {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .story-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--dark-text);
+        }
+        
+        .story-content p {
+            margin-bottom: 1.5rem;
+            text-indent: 2em;
+        }
+        
+        /* 关于日朗部分 */
+        .about-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .about-text h3 {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            width: 120px;
+            color: var(--primary-blue);
+        }
+        
+        /* 照片展示区 */
+        .gallery-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .gallery-item {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .gallery-caption {
+            padding: 1.5rem;
+        }
+        
+        .gallery-caption h4 {
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .gallery-caption p {
+            color: var(--light-text);
+            font-size: 0.95rem;
+        }
+        
+        /* 评论部分 */
+        .comments-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .comments-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+        
+        .comment-form-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .comment-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .form-title {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .member-only-note {
+            background-color: #fff8e1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #ffb300;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .member-only-note i {
+            color: #ffb300;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #e55a2b;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .comments-display-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .comments-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .comment-item {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .comment-author {
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        
+        .comment-author.member {
+            color: #2e7d32;
+        }
+        
+        .comment-author.member::after {
+            content: "会员";
+            background-color: #2e7d32;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+        }
+        
+        .comment-date {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .comment-content {
+            line-height: 1.6;
+        }
+        
+        /* 黑粉团队成员介绍 */
+        .team-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .team-member {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 5px solid #333;
+        }
+        
+        .team-icon {
+            font-size: 3.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        
+        .team-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .team-role {
+            color: var(--accent-orange);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .team-description {
+            color: var(--light-text);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* 黑粉团队致谢区 */
+        .acknowledgment-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #333, #555);
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+        }
+        
+        .acknowledgment-title {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        
+        .acknowledgment-content {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+        
+        .black-fans-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .black-fan {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        
+        .black-fan:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-orange);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .auth-section {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .subtitles-container, .gallery-container, .team-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-content, .comments-container {
+                flex-direction: column;
+            }
+            
+            .hero-image {
+                max-width: 250px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #15306e;
+        }
+    </style>
+</head>
+<body>
+    <!-- 会员模态框 -->
+    <div class="modal-overlay" id="membershipModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">成为会员</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="invite-form">
+                <p style="margin-bottom: 1rem;">请输入邀请码加入会员，只有会员才能发表评论</p>
+                <input type="text" class="invite-input" id="inviteCode" placeholder="请输入邀请码" maxlength="20">
+                <button class="invite-submit" id="submitInvite">加入会员</button>
+                <div id="inviteMessage" style="margin-top: 1rem; text-align: center;"></div>
+            </div>
+            <p class="invite-note">提示：邀请码为 HRL123456（区分大小写）</p>
+        </div>
+    </div>
+
+    <!-- 故事详情模态框 -->
+    <div class="modal-overlay" id="storyModal">
+        <div class="modal-content story-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="storyTitle">故事详情</h3>
+                <button class="modal-close" id="closeStoryModal">&times;</button>
+            </div>
+            <div class="story-content" id="storyContent">
+                <!-- 故事内容将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-user-secret"></i>
+                <div class="logo-text">日朗的秘密</div>
+            </div>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于日朗</a></li>
+                <li><a href="#gallery">精彩瞬间</a></li>
+                <li><a href="#subtitles">经典事件</a></li>
+		<li><a href="#hongrilang">火红的撒日朗</a></li>
+                <li><a href="#team">黑粉团队</a></li>
+                <li><a href="#comments">粉丝评论</a></li>
+            </ul>
+            
+            <div class="auth-section">
+                <div class="member-status" id="memberStatus">
+                    <i class="fas fa-user"></i>
+                    <span>非会员</span>
+                </div>
+                <button class="auth-btn" id="joinMemberBtn">加入会员</button>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>日朗的秘密</h1>
+            <p>探索温州苍南恒佳电脑店老板黄日朗的独特魅力与传奇故事</p>
+            <div class="hero-badge">43岁光头日朗的粉丝聚集地</div>
+            
+            <div class="hero-image fade-in">
+                <img src="https://i.ibb.co/pjkxn7rD/f7cb5f1b9d4de5453b376f89f9f608c3.jpg" alt="日朗照片">
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于日朗部分 -->
+    <section class="about-section" id="about">
+        <div class="section-title">
+            <h2>关于日朗</h2>
+        </div>
+        
+        <div class="about-content">
+            <div class="about-image">
+                <img src="https://i.ibb.co/pjkxn7rD/f7cb5f1b9d4de5453b376f89f9f608c3.jpg" alt="黄日朗" class="profile-img">
+            </div>
+            
+            <div class="about-text">
+                <h3>黄日朗 - 温州苍南恒佳电脑店老板</h3>
+                <p>黄日朗，温州苍南地区家喻户晓的传奇人物。作为恒佳电脑店的老板，他不仅是技术精湛的电脑维修专家，更是一位充满生活趣味的多面手。</p>
+                <p>从摩托车压弯高手到台球桌上的传奇人物，从美食爱好者到幽默大师，日朗的每一个故事都充满了戏剧性和趣味性。他的光头造型已成为个人标志，在苍南街头无人不识。</p>
+                <p>日朗的故事在粉丝间口口相传：从把台球黑八打进嘴里的传奇一刻，到吃卤蛋被噎死的惊险经历，每一个故事都展现了他率真、幽默的性格特点。</p>
+                
+                <div class="info-item">
+                    <div class="info-label">年龄:</div>
+                    <div>43岁</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">职业:</div>
+                    <div>恒佳电脑店老板兼技术总监</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">所在地:</div>
+                    <div>温州苍南</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">标志特征:</div>
+                    <div>光头造型，幽默风趣，多才多艺</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">特长爱好:</div>
+                    <div>摩托车特技、台球、电脑维修、美食探险</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">经典事迹:</div>
+                    <div>摩托车压弯、台球黑八进嘴、吃卤蛋被噎</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 照片展示区 -->
+    <section class="gallery-section" id="gallery">
+        <div class="section-title">
+            <h2>精彩瞬间</h2>
+        </div>
+        
+        <div class="gallery-container">
+            <div class="gallery-item fade-in">
+                <img src="https://i.ibb.co/pjkxn7rD/f7cb5f1b9d4de5453b376f89f9f608c3.jpg" alt="日朗本人" class="gallery-img">
+                <div class="gallery-caption">
+                    <h4>日朗的日常造型</h4>
+                    <p>经典的黄绿渐变至蓝绿色短袖Polo衫，搭配橙色裤子，光头造型格外醒目。作为恒佳电脑店的老板，这身打扮已经成为他的标志性形象。</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item fade-in">
+                <img src="https://i.ibb.co/cK5LTDwZ/07f0080f47d2876dd3d50ba2dc04e356.jpg" alt="摩托车压弯" class="gallery-img">
+                <div class="gallery-caption">
+                    <h4>摩托车压弯高手</h4>
+                    <p>夜晚的苍南街头，日朗骑着白色踏板摩托车表演压弯特技。后轮腾空，与地面摩擦产生大量火花，展现了他不凡的机车技巧和冒险精神。</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item fade-in">
+                <img src="https://i.ibb.co/TqxZSyjQ/82431c65b477dbfb0a1cfb4dacd30a26.jpg" alt="日朗的儿子" class="gallery-img">
+                <div class="gallery-caption">
+                    <h4>日朗的儿子</h4>
+                    <p>日朗的儿子继承了父亲的聪明才智，戴着眼镜，文质彬彬。虽然性格比父亲内敛，但同样充满魅力，是父亲的骄傲。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 经典事件展示区 -->
+    <section class="subtitles-section" id="subtitles">
+        <div class="section-title">
+            <h2>经典事件</h2>
+        </div>
+        
+        <div class="subtitles-container">
+            <div class="subtitle-card fade-in" data-story="motorcycle">
+                <div class="subtitle-icon">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <div class="subtitle-text">摩托车压弯</div>
+                <div class="subtitle-desc">"压弯不是技术，是艺术！" - 日朗在苍南街头展示惊人车技，后轮火花四溅成为经典画面。</div>
+                <button class="story-btn">查看完整故事</button>
+            </div>
+            
+            <div class="subtitle-card fade-in" data-story="bald">
+                <div class="subtitle-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="subtitle-text">43岁光头日朗</div>
+                <div class="subtitle-desc">"光头不是缺陷，是特色！" - 标志性的光头造型已成为日朗的个人品牌。</div>
+                <button class="story-btn">查看完整故事</button>
+            </div>
+            
+            <div class="subtitle-card fade-in" data-story="pool">
+                <div class="subtitle-icon">
+                    <i class="fas fa-billiard-ball"></i>
+                </div>
+                <div class="subtitle-text">打台球把黑八打进嘴里</div>
+                <div class="subtitle-desc">"这一杆，我自己吃了！" - 台球史上的传奇一刻。</div>
+                <button class="story-btn">查看完整故事</button>
+            </div>
+            
+            <div class="subtitle-card fade-in" data-story="egg">
+                <div class="subtitle-icon">
+                    <i class="fas fa-egg"></i>
+                </div>
+                <div class="subtitle-text">吃卤蛋被噎死</div>
+                <div class="subtitle-desc">"差点为卤蛋献身！" - 美食冒险中的惊险一幕。</div>
+                <button class="story-btn">查看完整故事</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 黑粉团队成员介绍 -->
+    <section class="team-section" id="team">
+        <div class="section-title">
+            <h2>黑粉团队成员</h2>
+        </div>
+        
+        <div class="team-container">
+            <div class="team-member fade-in">
+                <div class="team-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="team-name">王楚涵</h3>
+                <div class="team-role">正直的抵制者</div>
+                <div class="team-description">
+                    苍南本地人，以正直著称。作为黑粉团队的核心成员，他始终秉持着对HRL的抵制态度，用独特的方式记录和传播日朗的每一个瞬间。他的"黑"实际上是对日朗另一种形式的关注和爱护，通过犀利的观察和幽默的评论，让日朗的故事更加生动有趣。
+                </div>
+            </div>
+            
+            <div class="team-member fade-in">
+                <div class="team-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="team-name">DDM</h3>
+                <div class="team-role">网站制作者</div>
+                <div class="team-description">
+                    实名不详的神秘人物，是本网站的幕后制作者。凭借精湛的技术，DDM将日朗的故事和黑粉团队的内容完美呈现。他/她默默付出，是连接日朗与粉丝之间的技术桥梁，确保网站稳定运行，让更多人可以了解日朗的传奇故事。
+                </div>
+            </div>
+            
+            <div class="team-member fade-in">
+                <div class="team-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3 class="team-name">903同学</h3>
+                <div class="team-role">内容创作者</div>
+                <div class="team-description">
+                    为日朗产出大量有趣内容的创作者。从摩托车压弯的火花瞬间到台球桌上的戏剧性一刻，903同学用镜头和文字记录下日朗的每一个精彩时刻，是黑粉团队中最具创造力的一员。他的作品让日朗的故事在网络上广泛传播。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 评论部分 -->
+    <section class="comments-section" id="comments">
+        <div class="section-title">
+            <h2>粉丝评论</h2>
+        </div>
+        
+        <div class="comments-container">
+            <div class="comment-form-container">
+                <div class="comment-form">
+                    <h3 class="form-title">发表评论</h3>
+                    <div class="member-only-note" id="memberNote">
+                        <i class="fas fa-lock"></i>
+                        <span>仅限会员发表评论</span>
+                    </div>
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="name">昵称:</label>
+                            <input type="text" id="name" class="form-control" placeholder="请输入您的昵称" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">评论内容:</label>
+                            <textarea id="comment" class="form-control" placeholder="分享您对日朗的喜爱或有趣的故事..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn" id="submitComment" disabled>发表评论</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="comments-display-container">
+                <h3 style="color: var(--primary-blue); margin-bottom: 1.5rem; font-size: 1.8rem;">最新评论</h3>
+                <div class="comments-list" id="commentsList">
+                    <!-- 评论会动态加载到这里 -->
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author member">苍南小粉丝</div>
+                            <div class="comment-date">2026-02-10</div>
+                        </div>
+                        <div class="comment-content">日朗老板的电脑店技术一流，上次我电脑坏了，他十分钟就修好了，还教我好多电脑知识！他的光头在灯光下特别亮，哈哈！</div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author member">摩托车爱好者</div>
+                            <div class="comment-date">2026-02-08</div>
+                        </div>
+                        <div class="comment-content">亲眼见过日朗在苍南大道压弯，那技术真的绝了！白色踏板摩托车在他手里就像玩具一样，后轮火花太帅了！</div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author member">台球小王</div>
+                            <div class="comment-date">2026-02-05</div>
+                        </div>
+                        <div class="comment-content">黑八进嘴那个故事是真的！我就在现场，当时整个台球厅都笑翻了，日朗太有喜剧天赋了！他儿子长得真像他，就是没那么秃，哈哈！</div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author">卤蛋幸存者</div>
+                            <div class="comment-date">2026-02-03</div>
+                        </div>
+                        <div class="comment-content">听说日朗吃卤蛋被噎的故事后，我现在吃卤蛋都特别小心。不过说真的，他那种对生活的热情真的太感染人了！</div>
+                    </div>
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author member">恒佳电脑老客户</div>
+                            <div class="comment-date">2026-01-28</div>
+                        </div>
+                        <div class="comment-content">在日朗店里修电脑好几年了，他技术好，人又幽默，每次去都有新故事听。虽然43岁了，但心态比年轻人还年轻！</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- 新增：火红的撒日朗板块 -->
+    <section class="hong-section" id="hongrilang">
+        <div class="section-title">
+            <h2>火红的撒日朗</h2>
+        </div>
+        
+        <div class="hong-content">
+            <div class="hong-image">
+                <div style="width: 100%; height: 300px; background: linear-gradient(135deg, #ff0000, #ff6b6b); display: flex; align-items: center; justify-content: center; color: white; border-radius: 15px; box-shadow: var(--shadow);">
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-fire" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                        <div style="font-size: 1.8rem; font-weight: bold;">火红的撒日朗</div>
+                        <div style="font-size: 1.1rem; margin-top: 0.5rem;">与黄日朗的奇妙联系</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hong-text">
+                <h3>火红的撒日朗与黄日朗的关系</h3>
+                <p>近年来，网络上流传着一首名为《火红的撒日朗》的歌曲，许多粉丝惊奇地发现，这首歌的名字竟然与我们的偶像黄日朗有着奇妙的联系。</p>
+                
+                <div class="hong-fact">
+                    <h4><i class="fas fa-music" style="color: #ff6b35; margin-right: 10px;"></i>名字的巧合</h4>
+                    <p>"撒日朗"在歌曲中代表着热情、奔放和阳光，而巧合的是，我们的黄日朗先生正是这样一个充满活力和正能量的人。他的名字"日朗"寓意着如太阳般明亮、开朗的性格。</p>
+                </div>
+                
+                <div class="hong-fact">
+                    <h4><i class="fas fa-lightbulb" style="color: #ff6b35; margin-right: 10px;"></i>粉丝的发现</h4>
+                    <p>903同学最早发现了这个奇妙的联系，并在黑粉团队内部分享："你们听《火红的撒日朗》，这不就是在唱我们的日朗哥吗？热情似火，光头亮得像太阳！"</p>
+                </div>
+                
+                <div class="hong-fact">
+                    <h4><i class="fas fa-users" style="color: #ff6b35; margin-right: 10px;"></i>社区共识</h4>
+                    <p>现在，粉丝们已经把《火红的撒日朗》作为黄日朗的非官方应援歌曲。每当有日朗的精彩事迹发生时，粉丝们就会在评论中刷起："这就是火红的撒日朗本朗！"</p>
+                </div>
+                
+                <div class="hong-note">
+                    <p><strong>有趣的事实：</strong>日朗本人也知道这个梗，他笑着说："那我以后压弯的时候是不是得放这首歌当背景音乐？"王楚涵立即回应："别，我怕你听着太嗨，压弯压得更猛了。"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hong-quote">
+            <div style="background: linear-gradient(135deg, #fff5f5, #ffe8e8); padding: 2rem; border-radius: 12px; border-left: 5px solid #ff6b35; margin-top: 2rem;">
+                <div style="font-style: italic; font-size: 1.2rem; color: #333; margin-bottom: 1rem;">
+                    "火红的撒日朗，草原最美的花~ 这不就是我们日朗哥的真实写照吗？热情似火，照亮了整个苍南！"
+                </div>
+                <div style="text-align: right; color: #666; font-weight: 600;">—— 903同学评</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 在CSS部分添加以下样式 -->
+    <style>
+        /* 火红的撒日朗板块样式 */
+        .hong-section {
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .hong-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .hong-image {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .hong-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .hong-text h3 {
+            font-size: 2rem;
+            color: #ff0000;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hong-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .hong-fact {
+            background-color: #fff5f5;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #ff6b35;
+        }
+        
+        .hong-fact h4 {
+            color: #ff0000;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hong-note {
+            background-color: #fff8e1;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            border: 2px dashed #ffb300;
+        }
+        
+        @media (max-width: 768px) {
+            .hong-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <!-- 黑粉团队致谢区 -->
+    <section class="acknowledgment-section">
+        <h2 class="acknowledgment-title">特别鸣谢</h2>
+        <div class="acknowledgment-content">
+            <p>本网站的创建和运营离不开"黑粉团队"的大力支持。这些看似调侃实则充满爱意的"黑粉"们，用他们独特的方式记录和传播着日朗的每一个精彩瞬间。</p>
+            <p>从摩托车压弯的火花瞬间，到台球桌上的戏剧性一幕，从光头造型的日常记录，到吃卤蛋的惊险时刻，正是有了"黑粉团队"的细心观察和热情传播，才让日朗的故事在苍南乃至更广的范围为人所知。</p>
+            <p>在此，我们向"黑粉团队"的每一位成员致以最诚挚的感谢！你们的"黑"其实是另一种形式的"粉"，是日朗传奇故事不可或缺的一部分。</p>
+        </div>
+        
+        <h3 style="color: white; margin-top: 2rem; margin-bottom: 1rem;">黑粉团队核心成员</h3>
+        <div class="black-fans-list">
+            <div class="black-fan">王楚涵</div>
+            <div class="black-fan">DDM</div>
+            <div class="black-fan">903同学</div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-user-secret"></i> 日朗的秘密
+            </div>
+            
+            <div class="footer-links">
+                <a href="#home">首页</a>
+                <a href="#about">关于日朗</a>
+                <a href="#gallery">精彩瞬间</a>
+                <a href="#subtitles">经典事件</a>
+		<a href="#hongrilang">火红的撒日朗</a>
+                <a href="#team">黑粉团队</a>
+                <a href="#comments">粉丝评论</a>
+            </div>
+            
+            <p>温州苍南恒佳电脑店老板黄日朗粉丝聚集地</p>
+            <p>本网站为苍南黄日朗这个真实人物简介，绝非虚构</p>
+            
+            <div class="copyright">
+                &copy; 2026 日朗的秘密粉丝团 | 特别鸣谢：黑粉团队 | 设计制作：DDM
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 会员系统状态
+        let isMember = localStorage.getItem('isMember') === 'true';
+        
+        // DOM元素
+        const membershipModal = document.getElementById('membershipModal');
+        const storyModal = document.getElementById('storyModal');
+        const joinMemberBtn = document.getElementById('joinMemberBtn');
+        const closeModal = document.getElementById('closeModal');
+        const closeStoryModal = document.getElementById('closeStoryModal');
+        const submitInvite = document.getElementById('submitInvite');
+        const inviteCodeInput = document.getElementById('inviteCode');
+        const inviteMessage = document.getElementById('inviteMessage');
+        const memberStatus = document.getElementById('memberStatus');
+        const submitCommentBtn = document.getElementById('submitComment');
+        const commentForm = document.getElementById('commentForm');
+        const commentsList = document.getElementById('commentsList');
+        const memberNote = document.getElementById('memberNote');
+        const storyTitle = document.getElementById('storyTitle');
+        const storyContent = document.getElementById('storyContent');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        // 故事数据
+        const stories = {
+            motorcycle: {
+                title: "摩托车压弯传奇",
+                content: `
+                    <p>那是2024年夏天的一个夜晚，苍南的街道上灯火通明。黄日朗刚刚结束了一天的工作，骑着他那辆白色踏板摩托车准备回家。突然，一群年轻人在路边起哄："日朗哥，敢不敢给我们表演一下压弯？"</p>
+                    <p>日朗微微一笑，没有回答，只是调转车头，向着苍南大道驶去。年轻人见状，纷纷骑车跟上。来到一段宽阔少人的路段，日朗开始加速，白色踏板摩托车在路灯下划出一道优美的弧线。</p>
+                    <p>突然，他身体倾斜，摩托车以近乎45度的角度切入弯道。后轮与地面剧烈摩擦，火花四溅，如同夜空中绽放的烟花。围观的年轻人惊呼连连，有人甚至拿出手机记录下这惊险的一幕。</p>
+                    <p>完成压弯后，日朗稳稳停下，摘下头盔，露出标志性的光头。他擦了擦额头的汗，笑着说："压弯不是技术，是艺术！你们这些年轻人啊，就知道看热闹。"</p>
+                    <p>从此，"苍南弯道之王"的名号不胫而走。这段视频被903同学上传到网络后，迅速在当地引起了轰动。许多摩托车爱好者甚至专程来到苍南，希望能一睹日朗的压弯风采。</p>
+                    <p>但日朗本人对此很淡然："就是图个乐子，安全第一。你们可别学我，我这把年纪了，摔一跤可不得了。"话虽如此，每当夜深人静时，苍南大道上偶尔还能看到那道白色的身影，在夜色中划出优美的弧线。</p>
+                `
+            },
+            bald: {
+                title: "光头传奇：从无奈到招牌",
+                content: `
+                    <p>黄日朗的光头，如今已成为他的个人标志，但很少有人知道这背后的故事。这一切都要从五年前说起。</p>
+                    <p>那是一个普通的周二下午，日朗在恒佳电脑店为客人修理电脑。由于工作太专注，他没有注意到自己的头发已经被电脑风扇卷了进去。等到发现时，头顶已经秃了一大块。</p>
+                    <p>"当时真是又尴尬又好笑，"日朗回忆道，"客人笑得直不起腰，说我这是为了电脑事业献身。"</p>
+                    <p>无奈之下，日朗只好剃了个光头。起初他还有些不习惯，总觉得头上凉飕飕的。但很快他就发现，光头有不少好处：不用打理头发，洗头特别快，夏天还特别凉快。</p>
+                    <p>更让日朗没想到的是，这个光头造型竟然成了他的招牌。顾客们都说："找那个光头的日朗修电脑，技术一流！"王楚涵更是调侃道："日朗的光头，是苍南夜空中最亮的星，晚上走路都不用带手电筒。"</p>
+                    <p>渐渐地，日朗接受了这个新形象，甚至开始以此为荣。他常说："光头不是缺陷，是特色！你们有头发的人不懂，我这叫减少风阻，提高效率。"</p>
+                    <p>如今，43岁的光头日朗已经成为苍南的一道风景线。无论是修电脑、骑摩托车还是打台球，那个闪亮的光头总是格外醒目。DDM在设计这个网站时特别强调："一定要突出日朗的光头特色，这是他的个人品牌。"</p>
+                `
+            },
+            pool: {
+                title: "台球传奇：黑八进嘴事件",
+                content: `
+                    <p>这件事发生在苍南老街的"好运来"台球厅，时间是2023年的一个周末晚上。日朗和几个老友在打台球，赌注是一顿夜宵。</p>
+                    <p>轮到日朗击球时，台面上只剩下一颗黑八。他仔细瞄准，调整姿势，然后用力一击。奇怪的事情发生了：黑八没有按照预想的路线滚向球袋，而是以诡异的角度弹起，直直飞向日朗的脸。</p>
+                    <p>"我当时下意识地张嘴想喊'哎呀'，"日朗后来回忆道，"结果黑八就这么直接飞进了我嘴里。"</p>
+                    <p>台球厅瞬间安静了，所有人都目瞪口呆。几秒钟后，爆发出震天的笑声。903同学当时正好在场，他用手机记录下了这历史性的一刻。</p>
+                    <p>"我当时都懵了，"日朗说，"感觉嘴里突然多了个东西，硬邦邦的。吐出来一看，是黑八！我自己都忍不住笑了。"</p>
+                    <p>这件事迅速在苍南传开。有人说是日朗技术太好，连黑八都主动投降；有人说是他运气太背，连台球都跟他过不去。但无论如何，"打台球把黑八打进嘴里"成了日朗的又一个传奇故事。</p>
+                    <p>王楚涵对此评价道："日朗这是用实际行动告诉我们，台球不只是用手打的，还可以用嘴接。这才是真正的'全身上下都是技术'。"</p>
+                    <p>如今，每当日朗走进台球厅，老板都会开玩笑："日朗哥，今天要不要来个'口接黑八'特技表演？"而日朗总是笑着摆摆手："一次就够了，再表演我怕把牙崩了。"</p>
+                `
+            },
+            egg: {
+                title: "卤蛋惊魂记",
+                content: `
+                    <p>2024年冬天的一个中午，日朗在电脑店隔壁的小吃店吃午饭。他点了一碗牛肉面，加了个卤蛋。就是这个卤蛋，差点要了他的命。</p>
+                    <p>"我正跟朋友聊着天，一边说笑一边吃，"日朗回忆道，"突然一口卤蛋卡在喉咙里，上不来下不去。"</p>
+                    <p>起初日朗还没当回事，试着喝了几口水。但卤蛋卡得死死的，他开始感到呼吸困难，脸憋得通红。朋友们这才意识到问题的严重性。</p>
+                    <p>"我当时想，完了，不会真要被一颗卤蛋噎死吧？"日朗说，"那也太丢人了，传出去我这一世英名就毁了。"</p>
+                    <p>幸运的是，小吃店老板有急救经验。他立刻从背后抱住日朗，使用海姆立克急救法。一下，两下，三下...终于在第五下时，卤蛋"噗"的一声从日朗嘴里飞了出来。</p>
+                    <p>"卤蛋飞出去老远，正好掉在隔壁桌的汤碗里，"目击者DDM描述道，"溅了那人一身汤。但大家都顾不上这个，都在关心日朗的情况。"</p>
+                    <p>缓过气来的日朗第一句话是："这卤蛋...味道还真不错。"全场再次爆笑。</p>
+                    <p>事后，903同学将这件事编成了段子："日朗与卤蛋的生死对决，最终以日朗险胜告终。"而王楚涵则严肃地说："这件事告诉我们，吃饭要专心，特别是吃卤蛋的时候。"</p>
+                    <p>如今，每当日朗吃卤蛋，朋友们都会提醒："慢点吃，别又噎着了。"而日朗总是笑着回答："放心，我现在吃卤蛋都切成四瓣，绝对不会重蹈覆辙。"</p>
+                `
+            }
+        };
+        
+        // 初始化会员状态
+        function initMemberStatus() {
+            if (isMember) {
+                memberStatus.innerHTML = '<i class="fas fa-crown"></i><span>会员</span>';
+                memberStatus.classList.add('member');
+                submitCommentBtn.disabled = false;
+                memberNote.innerHTML = '<i class="fas fa-check-circle"></i><span>您已是会员，可以发表评论</span>';
+                memberNote.style.backgroundColor = '#e8f5e9';
+                memberNote.style.borderLeftColor = '#2e7d32';
+            } else {
+                memberStatus.innerHTML = '<i class="fas fa-user"></i><span>非会员</span>';
+                memberStatus.classList.remove('member');
+                submitCommentBtn.disabled = true;
+                memberNote.innerHTML = '<i class="fas fa-lock"></i><span>仅限会员发表评论</span>';
+                memberNote.style.backgroundColor = '#fff8e1';
+                memberNote.style.borderLeftColor = '#ffb300';
+            }
+        }
+        
+        // 打开会员模态框
+        joinMemberBtn.addEventListener('click', () => {
+            membershipModal.classList.add('active');
+            inviteCodeInput.focus();
+        });
+        
+        // 关闭会员模态框
+        closeModal.addEventListener('click', () => {
+            membershipModal.classList.remove('active');
+            inviteCodeInput.value = '';
+            inviteMessage.textContent = '';
+        });
+        
+        // 关闭故事模态框
+        closeStoryModal.addEventListener('click', () => {
+            storyModal.classList.remove('active');
+        });
+        
+        // 点击模态框外部关闭
+        membershipModal.addEventListener('click', (e) => {
+            if (e.target === membershipModal) {
+                membershipModal.classList.remove('active');
+                inviteCodeInput.value = '';
+                inviteMessage.textContent = '';
+            }
+        });
+        
+        storyModal.addEventListener('click', (e) => {
+            if (e.target === storyModal) {
+                storyModal.classList.remove('active');
+            }
+        });
+        
+        // 提交邀请码
+        submitInvite.addEventListener('click', () => {
+            const code = inviteCodeInput.value.trim();
+            
+            if (code === 'HRL123456') {
+                isMember = true;
+                localStorage.setItem('isMember', 'true');
+                inviteMessage.textContent = '恭喜！您已成为会员！';
+                inviteMessage.style.color = '#2e7d32';
+                setTimeout(() => {
+                    membershipModal.classList.remove('active');
+                    inviteCodeInput.value = '';
+                    inviteMessage.textContent = '';
+                    initMemberStatus();
+                    alert('欢迎加入日朗的秘密会员！现在您可以发表评论了。');
+                }, 1500);
+            } else {
+                inviteMessage.textContent = '邀请码错误，请重新输入！';
+                inviteMessage.style.color = '#e53935';
+            }
+        });
+        
+        // 回车提交邀请码
+        inviteCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitInvite.click();
+            }
+        });
+        
+        // 故事按钮点击事件
+        document.querySelectorAll('.story-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const card = e.target.closest('.subtitle-card');
+                const storyId = card.getAttribute('data-story');
+                
+                if (stories[storyId]) {
+                    storyTitle.textContent = stories[storyId].title;
+                    storyContent.innerHTML = stories[storyId].content;
+                    storyModal.classList.add('active');
+                }
+            });
+        });
+        
+        // 提交评论
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!isMember) {
+                alert('请先加入会员才能发表评论！');
+                membershipModal.classList.add('active');
+                return;
+            }
+            
+            const name = document.getElementById('name').value.trim();
+            const comment = document.getElementById('comment').value.trim();
+            
+            if (!name || !comment) {
+                alert('请填写昵称和评论内容！');
+                return;
+            }
+            
+            // 创建新评论
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item fade-in';
+            
+            // 获取当前日期
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-author member">${name}</div>
+                    <div class="comment-date">${dateStr}</div>
+                </div>
+                <div class="comment-content">${comment}</div>
+            `;
+            
+            // 将新评论添加到列表顶部
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            
+            // 清空表单
+            commentForm.reset();
+            
+            // 显示成功消息
+            alert('评论发表成功！感谢您的分享。');
+            
+            // 滚动到新评论位置
+            newComment.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        
+        // 移动端菜单切换
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // 滚动时显示动画
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        fadeElements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(el);
+        });
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为导航链接添加平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 关闭移动端菜单
+                    if (navLinks.classList.contains('active')) {
+                        navLinks.classList.remove('active');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 初始化会员状态
+            initMemberStatus();
+            
+            // 初始化字幕卡片动画
+            setTimeout(() => {
+                document.querySelectorAll('.subtitle-card').forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.2}s`;
+                });
+                
+                // 初始化图库卡片动画
+                document.querySelectorAll('.gallery-item').forEach((item, index) => {
+                    item.style.animationDelay = `${index * 0.2 + 0.3}s`;
+                });
+                
+                // 初始化团队卡片动画
+                document.querySelectorAll('.team-member').forEach((member, index) => {
+                    member.style.animationDelay = `${index * 0.2 + 0.6}s`;
+       		});
+
+		}, 300);
+// 添加一些随机评论
+const sampleComments = [
+    { name: "光头爱好者", comment: "日朗的光头是我见过最亮的！在阳光下会反光，晚上可以当路灯用！", daysAgo: 5, isMember: true },
+    { name: "压弯见证者", comment: "上次亲眼看到日朗压弯，火花比烟花还好看！就是有点费轮胎。", daysAgo: 8, isMember: true },
+    { name: "卤蛋供应商", comment: "自从日朗被卤蛋噎到的故事传开后，我们店的卤蛋销量增加了30%！", daysAgo: 12, isMember: false },
+    { name: "台球厅老板", comment: "日朗来打台球的那天，营业额翻了三倍！大家都想看看黑八进嘴的传奇。", daysAgo: 15, isMember: true }
+];
+
+// 自动添加示例评论
+setTimeout(() => {
+    sampleComments.forEach(sample => {
+        const date = new Date();
+        date.setDate(date.getDate() - sample.daysAgo);
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment-item';
+        commentElement.innerHTML = `
+            <div class="comment-header">
+                <div class="comment-author ${sample.isMember ? 'member' : ''}">${sample.name}</div>
+                <div class="comment-date">${dateStr}</div>
+            </div>
+            <div class="comment-content">${sample.comment}</div>
+        `;
+        
+        commentsList.appendChild(commentElement);
+    });
+}, 1000);
+});
+</script>
+</body>
+
+</html>
